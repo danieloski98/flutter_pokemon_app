@@ -11,6 +11,7 @@ import 'package:learning/models/pokemon.dart';
 import 'package:learning/providers/pokemon_data_providers.dart';
 import 'package:learning/widgets/pokemon_card.dart';
 import 'package:learning/widgets/pokemon_list_tile.dart';
+import 'package:learning/widgets/pokemon_stats_card.dart';
 
 final homePageControllerProvider =
     StateNotifierProvider<HomePageController, HomePageData>((ref) {
@@ -163,15 +164,28 @@ class _HomePageState extends ConsumerState<HomePage> {
             ),
             height: MediaQuery.sizeOf(context).height * 0.40,
             child: ListView.builder(
-                controller: _scrollController,
-                itemCount: _homePageData.data?.results?.length ?? 0,
-                itemBuilder: (context, index) {
-                  PokemonListResult pokemon =
-                      _homePageData.data!.results![index];
-                  return PokemonListTile(
-                      pokemonUrl: _homePageData.data!.results![index].url!);
-                }),
-          )
+              controller: _scrollController,
+              itemCount: _homePageData.data?.results?.length ?? 0,
+              itemBuilder: (context, index) {
+                PokemonListResult pokemon = _homePageData.data!.results![index];
+                return GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return PokemonStatsCard(
+                            pokemonUrl:
+                                _homePageData.data!.results![index].url!);
+                      },
+                    );
+                  },
+                  child: PokemonListTile(
+                    pokemonUrl: _homePageData.data!.results![index].url!,
+                  ),
+                );
+              },
+            ),
+          ),
         ],
       ),
     );

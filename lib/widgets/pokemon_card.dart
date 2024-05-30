@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:learning/providers/pokemon_data_providers.dart';
+import 'package:learning/widgets/pokemon_stats_card.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 
 import '../models/pokemon.dart';
@@ -27,76 +28,85 @@ class PokemonCard extends ConsumerWidget {
     return Skeletonizer(
       enabled: isLoading,
       ignoreContainers: true,
-      child: Container(
-        width: MediaQuery.sizeOf(context).width * 0.30,
-        height: MediaQuery.sizeOf(context).height * 0.35,
-        margin: EdgeInsets.symmetric(
-          horizontal: MediaQuery.sizeOf(context).width * 0.03,
-          vertical: MediaQuery.sizeOf(context).height * 0.01,
-        ),
-        padding: EdgeInsets.symmetric(
-          horizontal: MediaQuery.sizeOf(context).width * 0.03,
-          vertical: MediaQuery.sizeOf(context).height * 0.01,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Theme.of(context).primaryColor,
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black,
-              spreadRadius: 2,
-              blurRadius: 5,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  pokemon?.name?.toUpperCase() ?? "Pokemon",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onTap: () {
+          if (!isLoading) {
+            showDialog(context: context, builder: (_) {
+              return PokemonStatsCard(pokemonUrl: pokemonUrl);
+            });
+          }
+        },
+        child: Container(
+          width: MediaQuery.sizeOf(context).width * 0.30,
+          height: MediaQuery.sizeOf(context).height * 0.35,
+          margin: EdgeInsets.symmetric(
+            horizontal: MediaQuery.sizeOf(context).width * 0.03,
+            vertical: MediaQuery.sizeOf(context).height * 0.01,
+          ),
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.sizeOf(context).width * 0.03,
+            vertical: MediaQuery.sizeOf(context).height * 0.01,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            color: Theme.of(context).primaryColor,
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black,
+                spreadRadius: 2,
+                blurRadius: 5,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    pokemon?.name?.toUpperCase() ?? "Pokemon",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  "# ${pokemon?.id?.toString()}" ?? "Pokemon",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    "# ${pokemon?.id?.toString()}" ?? "Pokemon",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Expanded(
-              child: CircleAvatar(
+                ],
+              ),
+              Expanded(
+                child: CircleAvatar(
                   backgroundImage: pokemon != null
                       ? NetworkImage(pokemon.sprites!.frontDefault!)
                       : null,
-                radius: MediaQuery.sizeOf(context).height * 0.05,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween ,
-              children: [
-                Text(
-                  "${pokemon?.moves?.length} moves" ?? "0 moves",
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  radius: MediaQuery.sizeOf(context).height * 0.05,
                 ),
-                IconButton(onPressed: () {
-                  _favouritePokemonsProvider.removeFavouritePokemon(pokemonUrl);
-                }, icon: Icon(Icons.favorite, color: Colors.red,))
-              ],
-            )
-          ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween ,
+                children: [
+                  Text(
+                    "${pokemon?.moves?.length} moves" ?? "0 moves",
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(onPressed: () {
+                    _favouritePokemonsProvider.removeFavouritePokemon(pokemonUrl);
+                  }, icon: Icon(Icons.favorite, color: Colors.red,))
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
